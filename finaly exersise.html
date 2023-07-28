@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>finaly exersise v.2</title>
+    <style>
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+
+      .result {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        width: 800px;
+      }
+      .card {
+        margin: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <label>Номер страницы <input type="number" class="input input_number" value="2" /></label>
+    <label>Лимит <input type="number" class="input input_limit" value="2" /></label>
+    <button class="button">Запрос</button>
+    <div class="result"></div>
+
+    <script>
+      const inputNumber = document.querySelector(".input_number");
+      const inputLimit = document.querySelector(".input_limit");
+      const button = document.querySelector(".button");
+      const resultNode = document.querySelector(".result");
+
+      function checkStorage() {
+        const pictures = JSON.parse(localStorage.getItem("pictures"));
+        console.log(pictures);
+
+        function addPictures(pictures) {
+          let cards = "";
+          pictures.forEach(function (item) {
+            const cardBlock = `
+                    <div class="card">
+                      <img
+                        src="${item.download_url}"
+                        class="card-image" width = "200px"
+                      />
+                    </div>
+                    `;
+
+            cards = cards + cardBlock;
+            resultNode.innerHTML = cards;
+          });
+        }
+        addPictures(pictures);
+      }
+      checkStorage();
+
+      button.addEventListener("click", function () {
+        localStorage.clear();
+      });
+
+      button.addEventListener("click", function () {
+        const number = Number(inputNumber.value);
+        const limit = Number(inputLimit.value);
+
+        const url = "https://picsum.photos/v2/list?page=" + number + "&" + "limit=" + limit;
+        // console.log('url', url);
+
+        if (number < 1 || number > 10) {
+          if (limit < 1 || limit > 10) {
+            console.log("Номер страницы и лимит вне диапазона от 1 до 10");
+          } else {
+            console.log("Номер страницы вне диапазона от 1 до 10");
+          }
+        } else if (limit < 1 || limit > 10) {
+          console.log("Лимит вне диапазона от 1 до 10");
+        } else {
+          fetch(url)
+            .then((response) => {
+              return response.json();
+            })
+
+            .then((json) => {
+              // console.log("url 0", json[0].download_url)
+              let cards = "";
+
+              json.forEach(function (item) {
+                // console.log("download_url", item.download_url)
+                const cardBlock = `
+                    <div class="card">
+                      <img
+                        src="${item.download_url}"
+                        class="card-image" width = "200px"
+                      />
+                    </div>
+                    `;
+
+                cards = cards + cardBlock;
+                resultNode.innerHTML = cards;
+              });
+              localStorage.setItem("pictures", JSON.stringify(json));
+              return json;
+            })
+            .catch(() => {
+              checkStorage();
+            });
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>exersise 4</title>
+  </head>
+  <body>
+    <input type="number" class="input input_width" value="200" />
+    <input type="number" class="input input_height" value="200" />
+    <button class="button">SUBMIT</button>
+    <div class="result"></div>
+
+    <script>
+      const inputWidth = document.querySelector(".input_width");
+      const inputHeight = document.querySelector(".input_height");
+      const button = document.querySelector(".button");
+      const resultNode = document.querySelector(".result");
+
+      button.addEventListener("click", function () {
+        const width = Number(inputWidth.value);
+        const height = Number(inputHeight.value);
+        const url = "https://picsum.photos/" + width + "/" + height;
+
+        if (width < 100 || width > 300 || height < 100 || height > 300) {
+          console.log("одно из чисел вне диапазона от 100 до 300");
+        } else {
+          fetch(url)
+            .then((data) => {
+              let cards = "";
+              const cardBlock = `
+          <div class="card">
+            <img
+              src="${url}"
+              class="card-image"
+            />
+          </div>
+          `;
+
+              cards = cards + cardBlock;
+              resultNode.innerHTML = cards;
+            })
+            .catch(() => {
+              console.log("error");
+            });
+        }
+      });
+    </script>
+  </body>
+</html>
